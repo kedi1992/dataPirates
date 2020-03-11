@@ -25,7 +25,7 @@ SECRET_KEY = 'gli$^&^+p==7dbht-kj*la0n)6rcwsxo6lr1)rf7mio)7qx)q&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
