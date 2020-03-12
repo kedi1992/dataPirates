@@ -1,0 +1,68 @@
+{% extends 'aws/base.html' %}
+
+{% block main %}
+    <div class="main-content">
+        <div class="section__content section__content--p30">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-10">
+                        <div class="recent-report2">
+                            <h3 class="title-3">{{ category }}</h3>&nbsp;&nbsp;
+                            <div class="chart-info">
+                                <div class="chart-info__left">
+                                    <div class="chart-note">
+                                        <span class="dot dot--blue"></span>
+                                        {% for e in info %}
+                                            <span>{{ e }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="table-responsive m-b-40">
+                            <table class="table table-borderless table-data3">
+                            <thead>
+                                <tr>
+                                    <th>Region</th>
+                                    <th>OS Name</th>
+                                    <th>vCPU</th>
+                                    <th class="text-right">RAM</th>
+                                    <th class="text-right">Prices</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><div class="radio">
+                                            <label for="radio1" class="form-check-label ">
+                                                <input type="radio" id="radio1" name="radios" value="" class="form-check-input">Mumbai
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td>Linux</td>
+                                    <td>8 Core</td>
+                                    <td class="text-right">16GB</td>
+                                    <td class="text-right">$100</td>
+                                </tr>
+                                <tr>
+                                    <td><div class="radio">
+                                            <label for="radio1" class="form-check-label ">
+                                                <input type="radio" id="radio11" name="radios" value="" class="form-check-input">Pune
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td>Linux</td>
+                                    <td>8 Core</td>
+                                    <td class="text-right">16GB</td>
+                                    <td class="text-right">$100</td>
+                                </tr>
+                            </tbody>
+                            </table><br>
+                            <button type="button" class="btn btn-success">Add To Cart</button>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
