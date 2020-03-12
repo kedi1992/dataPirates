@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import os
 import sys
+from lib.ec2.price_check import download_all_region_related_info
+download_all_region_related_info()
 
 if __name__ == '__main__':
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'awsproject.settings')

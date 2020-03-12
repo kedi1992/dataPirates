@@ -1,0 +1,223 @@
+{
+    "formatVersion": "v1.0",
+    "disclaimer": "This pricing list is for informational purposes only. All prices are subject to the additional terms included in the pricing pages on http://aws.amazon.com. All Free Tier prices are also subject to the terms included at https://aws.amazon.com/free/",
+    "offerCode": "AmazonS3",
+    "version": "20200228094205",
+    "publicationDate": "2020-02-28T09:42:05Z",
+    "products": {
+        "5TZZRHY6ENEGWQD7": {
+            "sku": "5TZZRHY6ENEGWQD7",
+            "attributes": {
+                "servicecode": "AmazonS3",
+                "transferType": "InterRegion Outbound",
+                "fromLocation": "China (Ningxia)",
+                "fromLocationType": "AWS Region",
+                "toLocation": "China (Beijing)",
+                "toLocationType": "AWS Region",
+                "usagetype": "CNN1-CNW1-S3RTC-Out-Bytes",
+                "operation": "",
+                "servicename": "Amazon Simple Storage Service"
+            }
+        },
+        "2PVGRHZUQQN4FR6B": {
+            "sku": "2PVGRHZUQQN4FR6B",
+            "attributes": {
+                "servicecode": "AmazonS3",
+                "transferType": "IntraRegion Inbound",
+                "fromLocation": "China (Beijing)",
+                "fromLocationType": "AWS Region",
+                "toLocation": "China (Beijing)",
+                "toLocationType": "AWS Region",
+                "usagetype": "CNN1-CNN1-S3RTC-In-Bytes",
+                "operation": "",
+                "servicename": "Amazon Simple Storage Service"
+            }
+        },
+        "YGVJD5WVR4N5994Z": {
+            "sku": "YGVJD5WVR4N5994Z",
+            "attributes": {
+                "servicecode": "AmazonS3",
+                "transferType": "IntraRegion Outbound",
+                "fromLocation": "China (Beijing)",
+                "fromLocationType": "AWS Region",
+                "toLocation": "China (Beijing)",
+                "toLocationType": "AWS Region",
+                "usagetype": "CNN1-CNN1-S3RTC-Out-Bytes",
+                "operation": "",
+                "servicename": "Amazon Simple Storage Service"
+            }
+        },
+        "C7EZPP9M9KHANCB7": {
+            "sku": "C7EZPP9M9KHANCB7",
+            "attributes": {
+                "servicecode": "AmazonS3",
+                "transferType": "InterRegion Inbound",
+                "fromLocation": "China (Ningxia)",
+                "fromLocationType": "AWS Region",
+                "toLocation": "China (Beijing)",
+                "toLocationType": "AWS Region",
+                "usagetype": "CNW1-CNN1-S3RTC-In-Bytes",
+                "operation": "",
+                "servicename": "Amazon Simple Storage Service"
+            }
+        },
+        "M5C97AR9VTQFFZBF": {
+            "sku": "M5C97AR9VTQFFZBF",
+            "attributes": {
+                "servicecode": "AmazonS3",
+                "transferType": "InterRegion Inbound",
+                "fromLocation": "China (Beijing)",
+                "fromLocationType": "AWS Region",
+                "toLocation": "China (Ningxia)",
+                "toLocationType": "AWS Region",
+                "usagetype": "CNN1-CNW1-S3RTC-In-Bytes",
+                "operation": "",
+                "servicename": "Amazon Simple Storage Service"
+            }
+        },
+        "MRBUHV2AV8HGNTH4": {
+            "sku": "MRBUHV2AV8HGNTH4",
+            "attributes": {
+                "servicecode": "AmazonS3",
+                "transferType": "InterRegion Outbound",
+                "fromLocation": "China (Beijing)",
+                "fromLocationType": "AWS Region",
+                "toLocation": "China (Ningxia)",
+                "toLocationType": "AWS Region",
+                "usagetype": "CNW1-CNN1-S3RTC-Out-Bytes",
+                "operation": "",
+                "servicename": "Amazon Simple Storage Service"
+            }
+        }
+    },
+    "terms": {
+        "OnDemand": {
+            "YGVJD5WVR4N5994Z": {
+                "YGVJD5WVR4N5994Z.JRTCKXETXF": {
+                    "offerTermCode": "JRTCKXETXF",
+                    "sku": "YGVJD5WVR4N5994Z",
+                    "effectiveDate": "2019-11-01T00:00:00Z",
+                    "priceDimensions": {
+                        "YGVJD5WVR4N5994Z.JRTCKXETXF.6YS6EN2CT7": {
+                            "rateCode": "YGVJD5WVR4N5994Z.JRTCKXETXF.6YS6EN2CT7",
+                            "description": "$0.015 per GB - China (Beijing) Data Transfer for Replication Time Control to China (Beijing)",
+                            "beginRange": "0",
+                            "endRange": "Inf",
+                            "unit": "GB",
+                            "pricePerUnit": {
+                                "USD": "0.0150000000"
+                            },
+                            "appliesTo": []
+                        }
+                    },
+                    "termAttributes": {}
+                }
+            },
+            "M5C97AR9VTQFFZBF": {
+                "M5C97AR9VTQFFZBF.JRTCKXETXF": {
+                    "offerTermCode": "JRTCKXETXF",
+                    "sku": "M5C97AR9VTQFFZBF",
+                    "effectiveDate": "2019-11-01T00:00:00Z",
+                    "priceDimensions": {
+                        "M5C97AR9VTQFFZBF.JRTCKXETXF.6YS6EN2CT7": {
+                            "rateCode": "M5C97AR9VTQFFZBF.JRTCKXETXF.6YS6EN2CT7",
+                            "description": "$0.00 per GB - China (Beijing) Data Transfer for Replication Time Control to China (Ningxia)",
+                            "beginRange": "0",
+                            "endRange": "Inf",
+                            "unit": "GB",
+                            "pricePerUnit": {
+                                "USD": "0.0000000000"
+                            },
+                            "appliesTo": []
+                        }
+                    },
+                    "termAttributes": {}
+                }
+            },
+            "2PVGRHZUQQN4FR6B": {
+                "2PVGRHZUQQN4FR6B.JRTCKXETXF": {
+                    "offerTermCode": "JRTCKXETXF",
+                    "sku": "2PVGRHZUQQN4FR6B",
+                    "effectiveDate": "2019-11-01T00:00:00Z",
+                    "priceDimensions": {
+                        "2PVGRHZUQQN4FR6B.JRTCKXETXF.6YS6EN2CT7": {
+                            "rateCode": "2PVGRHZUQQN4FR6B.JRTCKXETXF.6YS6EN2CT7",
+                            "description": "$0.00 per GB - China (Beijing) Data Transfer for Replication Time Control to China (Beijing)",
+                            "beginRange": "0",
+                            "endRange": "Inf",
+                            "unit": "GB",
+                            "pricePerUnit": {
+                                "USD": "0.0000000000"
+                            },
+                            "appliesTo": []
+                        }
+                    },
+                    "termAttributes": {}
+                }
+            },
+            "5TZZRHY6ENEGWQD7": {
+                "5TZZRHY6ENEGWQD7.JRTCKXETXF": {
+                    "offerTermCode": "JRTCKXETXF",
+                    "sku": "5TZZRHY6ENEGWQD7",
+                    "effectiveDate": "2019-11-01T00:00:00Z",
+                    "priceDimensions": {
+                        "5TZZRHY6ENEGWQD7.JRTCKXETXF.6YS6EN2CT7": {
+                            "rateCode": "5TZZRHY6ENEGWQD7.JRTCKXETXF.6YS6EN2CT7",
+                            "description": "$0.015 per GB - China (Ningxia) Data Transfer for Replication Time Control to China (Beijing)",
+                            "beginRange": "0",
+                            "endRange": "Inf",
+                            "unit": "GB",
+                            "pricePerUnit": {
+                                "USD": "0.0150000000"
+                            },
+                            "appliesTo": []
+                        }
+                    },
+                    "termAttributes": {}
+                }
+            },
+            "C7EZPP9M9KHANCB7": {
+                "C7EZPP9M9KHANCB7.JRTCKXETXF": {
+                    "offerTermCode": "JRTCKXETXF",
+                    "sku": "C7EZPP9M9KHANCB7",
+                    "effectiveDate": "2019-11-01T00:00:00Z",
+                    "priceDimensions": {
+                        "C7EZPP9M9KHANCB7.JRTCKXETXF.6YS6EN2CT7": {
+                            "rateCode": "C7EZPP9M9KHANCB7.JRTCKXETXF.6YS6EN2CT7",
+                            "description": "$0.00 per GB - China (Ningxia) Data Transfer for Replication Time Control to China (Beijing)",
+                            "beginRange": "0",
+                            "endRange": "Inf",
+                            "unit": "GB",
+                            "pricePerUnit": {
+                                "USD": "0.0000000000"
+                            },
+                            "appliesTo": []
+                        }
+                    },
+                    "termAttributes": {}
+                }
+            },
+            "MRBUHV2AV8HGNTH4": {
+                "MRBUHV2AV8HGNTH4.JRTCKXETXF": {
+                    "offerTermCode": "JRTCKXETXF",
+                    "sku": "MRBUHV2AV8HGNTH4",
+                    "effectiveDate": "2019-11-01T00:00:00Z",
+                    "priceDimensions": {
+                        "MRBUHV2AV8HGNTH4.JRTCKXETXF.6YS6EN2CT7": {
+                            "rateCode": "MRBUHV2AV8HGNTH4.JRTCKXETXF.6YS6EN2CT7",
+                            "description": "$0.015 per GB - China (Beijing) Data Transfer for Replication Time Control to China (Ningxia)",
+                            "beginRange": "0",
+                            "endRange": "Inf",
+                            "unit": "GB",
+                            "pricePerUnit": {
+                                "USD": "0.0150000000"
+                            },
+                            "appliesTo": []
+                        }
+                    },
+                    "termAttributes": {}
+                }
+            }
+        }
+    }
+}
