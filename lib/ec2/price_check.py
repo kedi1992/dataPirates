@@ -31,13 +31,25 @@ def get_all_region_related_ec2():
     return result
 
 
-def get_all_download_path():
+def get_all_download_path(operating_system=None, region=None, pricing_strategy=None):
     result = []
     for dirpath, dirnames, files in os.walk(os.path.join(os.path.dirname(__file__), "region"), topdown=False):
         for file in files:
             file_location = os.path.join(dirpath, file)
-            if os.path.isfile(file_location) and ".json" in file_location:
-                result.append(file_location)
+            if not (os.path.isfile(file_location) and ".json" in file_location):
+                continue
+
+            if operating_system and not (operating_system.lower() + "-" in file_location):
+                continue
+
+            if region and not (region.lower() == os.path.basename(os.path.dirname(file_location))):
+                continue
+
+            if pricing_strategy and not (pricing_strategy.lower() in file_location):
+                continue
+
+            result.append(file_location)
+
     return result
 
 
@@ -84,8 +96,6 @@ def download_all_region_related_info(operating_system='linux'):
 
 
 def get_ram(product):
-    # print(type(product))
-
     if product["attributes"].get("aws:ec2:memory"):
         product_memory = float(product["attributes"]["aws:ec2:memory"].replace("GiB", "").strip())
         return product_memory
@@ -95,7 +105,7 @@ def get_ram(product):
 
 def get_vcpu(product):
     if product["attributes"].get("aws:ec2:vcpu"):
-        product_vcpu = float(product["attributes"]["aws:ec2:vcpu"].strip())
+        product_vcpu = int(product["attributes"]["aws:ec2:vcpu"].strip())
         print(product_vcpu)
         return product_vcpu
     # print("It don't have aws:ec2:memory")
@@ -109,13 +119,25 @@ def get_product_price(product):
     return 0
 
 
-def compare_against_price(price_list, compair_product):
+def compare_against_price(price_list, compair_product, filter_ondemand=None):
     best_result = compair_product
     for product in price_list:
-        if not get_product_price(product) <= get_product_price(best_result):
+
+        if filter_ondemand:
+            print("on demand filter acitvated")
+            if product.get("calculatedPrice") and best_result.get("calculatedPrice"):
+                if not (float(product["calculatedPrice"]["onDemandRate"]["USD"]) \
+                        < float(best_result["calculatedPrice"]["onDemandRate"]["USD"])):
+                    continue
+            else:
+                continue
+        elif not get_product_price(product) <= get_product_price(best_result):
             continue
 
         if not get_ram(product) >= get_ram(best_result):
+            continue
+
+        if not get_vcpu(product) >= get_vcpu(best_result):
             continue
 
         best_result = product
@@ -123,7 +145,7 @@ def compare_against_price(price_list, compair_product):
     return best_result
 
 
-def filter_result(price_list, ram=9, vcpu=None):
+def filter_result(price_list, ram=9, vcpu=4, filter_ondemand=None):
     best_match = None
     product: dict
     for product in price_list:
@@ -140,7 +162,10 @@ def filter_result(price_list, ram=9, vcpu=None):
                     continue
                 continue
 
-            print("Best match set")
+            # print("Best match set")
+            # print(product_vcpu)
+            # print(get_vcpu(best_match))
+            # print()
 
             if (product_memory < get_ram(best_match)) \
                     and ((product_memory - ram) <= (get_ram(best_match) - ram)) \
@@ -151,7 +176,7 @@ def filter_result(price_list, ram=9, vcpu=None):
                 best_match = product
 
         # compare against ram
-        if ram:
+        if ram and vcpu is None:
             if product["attributes"].get("aws:ec2:memory"):
                 product_memory = get_ram(product)
 
@@ -169,7 +194,7 @@ def filter_result(price_list, ram=9, vcpu=None):
         # comparision against vcpu
         if vcpu and (ram is None):
             if product["attributes"].get("aws:ec2:vcpu"):
-                print("comparing with vcpu")
+                # print("comparing with vcpu")
                 product_vcpu = get_vcpu(product)
 
                 # compare against vcpu
@@ -184,10 +209,165 @@ def filter_result(price_list, ram=9, vcpu=None):
                         and (vcpu < get_vcpu(product)):
                     best_match = product
 
-        if best_match is not None:
+    if best_match is not None:
+        if filter_ondemand:
+            best_match = compare_against_price(price_list, best_match, filter_ondemand)
+        else:
             best_match = compare_against_price(price_list, best_match)
-
     return best_match
+
+
+def one_year_std_reserved(product_list, compare_product):
+    best_result = None
+    id_sep = compare_product["id"].split(".")
+    part_1 = id_sep[0]
+    part_2 = id_sep[2]
+
+    print(id_sep)
+    print(part_1, part_2)
+
+    for product in product_list:
+        if not (part_1 in product.get("id") and part_2 in product.get("id")):
+            continue
+
+        print("match found")
+        if not (product["attributes"].get("aws:offerTermLeaseLength") == "1yr"):
+            continue
+
+        print("Second match found")
+        if not (product["attributes"].get("aws:offerTermOfferingClass") == "standard"):
+            continue
+
+        if not (product["attributes"].get("aws:offerTermPurchaseOption") == "No Upfront"):
+            continue
+
+        best_result = product
+
+    return best_result
+
+
+def three_year_std_reserved(product_list, compare_product):
+    best_result = None
+    id_sep = compare_product["id"].split(".")
+    part_1 = id_sep[0]
+    part_2 = id_sep[2]
+
+    print(id_sep)
+    print(part_1, part_2)
+
+    for product in product_list:
+        if not (part_1 in product.get("id") and part_2 in product.get("id")):
+            continue
+
+        print("match found")
+        if not (product["attributes"].get("aws:offerTermLeaseLength") == "3yr"):
+            continue
+
+        print("Second match found")
+        if not (product["attributes"].get("aws:offerTermOfferingClass") == "standard"):
+            continue
+
+        if not (product["attributes"].get("aws:offerTermPurchaseOption") == "No Upfront"):
+            continue
+
+        best_result = product
+
+    return best_result
+
+
+def get_all_costing(vcpu=4, memory=5, operating_system="linux"):
+    result_data = []
+    all_region = get_all_region_related_ec2()
+
+    for region in all_region:
+        print("RRRRRRRRRRRRRRegion", region)
+
+        ondemand_path = get_all_download_path(operating_system=operating_system, region=region,
+                                              pricing_strategy="onedemand")
+
+        if not ondemand_path:
+            reserved_path = get_all_download_path(operating_system=operating_system, region=region,
+                                                  pricing_strategy="reserved")
+
+            with open(reserved_path[0]) as on_dem:
+                reserved = json.load(on_dem)
+
+            reserver_result = filter_result(price_list=reserved["prices"],
+                                            ram=memory,
+                                            vcpu=vcpu,
+                                            filter_ondemand=True)
+            print("Calling reserver result")
+            if reserver_result:
+                # result_data.append(reserver_result)
+
+                new_result = one_year_std_reserved(reserved["prices"], reserver_result)
+                if new_result:
+                    result_data.append(get_required_field(new_result))
+            continue
+
+        print(ondemand_path)
+        with open(ondemand_path[0]) as on_dem:
+            on_demand = json.load(on_dem)
+
+        result = filter_result(price_list=on_demand["prices"],
+                               ram=memory,
+                               vcpu=vcpu)
+
+        # return result
+
+        # result_data.append(result)
+
+        reserved_path = get_all_download_path(operating_system=operating_system, region=region,
+                                              pricing_strategy="reserved")
+
+        if not reserved_path and result:
+            result_data.append(get_required_field(result))
+
+        if reserved_path and not result:
+            with open(reserved_path[0]) as on_dem:
+                reserved = json.load(on_dem)
+
+            reserver_result = filter_result(price_list=reserved["prices"],
+                                            ram=memory,
+                                            vcpu=vcpu,
+                                            filter_ondemand=True)
+            print("Calling reserver result")
+            if reserver_result:
+                result_data.append(get_required_field(reserver_result))
+
+        if reserved_path and result:
+            with open(reserved_path[0]) as on_dem:
+                reserved = json.load(on_dem)
+
+            if result is not None:
+                print("Getting one year data")
+                new_result = one_year_std_reserved(reserved["prices"], result)
+                if new_result:
+                    result_data.append(get_required_field(new_result))
+
+                print(new_result)
+
+    return result_data
+
+
+def get_required_field(product):
+    result = {
+        "vCpu": get_vcpu(product=product),
+        "memory": get_ram(product=product),
+        "instanceType": product["attributes"].get("aws:ec2:instanceType", "NA"),
+        "onDemandHourlyCost": get_product_price(product=product),
+        "onDemandMonthlyCost": "NA",
+        "onDemandYearlyCost": "NA",
+        "1yrStdReservedHourlyCost": "NA"
+    }
+
+    if product.get("calculatedPrice"):
+        result["onDemandHourlyCost"] = product["calculatedPrice"]["onDemandRate"]["USD"]
+        result["onDemandMonthlyCost"] = float(result["onDemandHourlyCost"]) * 730
+        result["onDemandYearlyCost"] = float(result["onDemandMonthlyCost"]) * 365
+        result["1yrStdReservedHourlyCost"] = product["calculatedPrice"]["effectiveHourlyRate"]["USD"]
+
+    return result
 
 
 if __name__ == '__main__':
@@ -197,7 +377,8 @@ if __name__ == '__main__':
 
     # print(get_all_region_related_ec2())
     # download_all_region_related_info()
-    # pp(get_all_download_path())
+    pp(get_all_download_path(operating_system="linux", region="us-west-2",
+                             pricing_strategy="reserved"))
 
     import json
 
@@ -211,4 +392,13 @@ if __name__ == '__main__':
 
     print(len(on_demand["prices"]))
     print(len(reserved["prices"]))
-    pp(filter_result(on_demand["prices"]))
+    # result = filter_result(on_demand["prices"])
+    # pp(result)
+    #
+
+    # if result is not None:
+    #     print("Getting one year data")
+    #     new_result = three_year_std_reserved(reserved["prices"], result)
+    #     print(new_result)
+
+    pp(get_all_costing())
