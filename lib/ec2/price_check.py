@@ -13,11 +13,20 @@ https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/computesavingsplan/USD/cu
 import requests
 import os
 import json
-from pprint import pprint as pp
-import glob
-
+import urllib3
+urllib3.disable_warnings()
 region_path = os.path.join(os.path.dirname(__file__), "region")
-os.makedirs(region_path, exist_ok=True)
+region_mapping = os.path.join(os.path.dirname(os.path.dirname(__file__)), "regionMapping.json")
+
+with open(region_mapping) as region_mapping_dp:
+    region_mapping_actual: dict = json.load(region_mapping_dp)
+
+region_mapping_json = {v: k for k, v in region_mapping_actual.items()}
+
+print(region_mapping)
+
+
+# with open(os.path.dirname(__file__))
 
 
 # glob.glob()
@@ -62,15 +71,22 @@ def download_information(remote_url, file_name, download_location):
     try:
         os.makedirs(download_location, exist_ok=True)
         download_file_location = os.path.join(download_location, file_name)
-
-        with open(download_file_location, mode="w") as fw:
-            json.dump(response.json(), fp=fw, indent=4)
+        result_json = response.json()
+        if result_json:
+            with open(download_file_location, mode="w") as fw:
+                json.dump(result_json, fp=fw, indent=4)
     except Exception as e:
         print("Related region no information found ")
         print(remote_url)
 
 
 def download_all_region_related_info(operating_system='linux'):
+    print(region_path)
+    if os.path.exists(region_path):
+        print("No need to download data")
+        return
+
+    os.makedirs(region_path, exist_ok=True)
     all_region = get_all_region_related_ec2()
     for region in all_region:
         ondemand_url = "https://calculator.aws/pricing/1.0/" \
@@ -223,18 +239,13 @@ def one_year_std_reserved(product_list, compare_product):
     part_1 = id_sep[0]
     part_2 = id_sep[2]
 
-    print(id_sep)
-    print(part_1, part_2)
-
     for product in product_list:
         if not (part_1 in product.get("id") and part_2 in product.get("id")):
             continue
 
-        print("match found")
         if not (product["attributes"].get("aws:offerTermLeaseLength") == "1yr"):
             continue
 
-        print("Second match found")
         if not (product["attributes"].get("aws:offerTermOfferingClass") == "standard"):
             continue
 
@@ -280,7 +291,6 @@ def get_all_costing(vcpu=4, memory=5, operating_system="linux"):
     all_region = get_all_region_related_ec2()
 
     for region in all_region:
-        print("RRRRRRRRRRRRRRegion", region)
 
         ondemand_path = get_all_download_path(operating_system=operating_system, region=region,
                                               pricing_strategy="onedemand")
@@ -296,7 +306,6 @@ def get_all_costing(vcpu=4, memory=5, operating_system="linux"):
                                             ram=memory,
                                             vcpu=vcpu,
                                             filter_ondemand=True)
-            print("Calling reserver result")
             if reserver_result:
                 # result_data.append(reserver_result)
 
@@ -336,6 +345,7 @@ def get_all_costing(vcpu=4, memory=5, operating_system="linux"):
                 result_data.append(get_required_field(reserver_result))
 
         if reserved_path and result:
+            print(reserved_path)
             with open(reserved_path[0]) as on_dem:
                 reserved = json.load(on_dem)
 
@@ -347,6 +357,7 @@ def get_all_costing(vcpu=4, memory=5, operating_system="linux"):
 
                 print(new_result)
 
+    result_data = sorted(result_data, key=lambda v: v.get("onDemandHourlyCost"))
     return result_data
 
 
@@ -358,7 +369,8 @@ def get_required_field(product):
         "onDemandHourlyCost": get_product_price(product=product),
         "onDemandMonthlyCost": "NA",
         "onDemandYearlyCost": "NA",
-        "1yrStdReservedHourlyCost": "NA"
+        "1yrStdReservedHourlyCost": "NA",
+        "region": region_mapping_json.get(product["attributes"].get("aws:region"), "NA")
     }
 
     if product.get("calculatedPrice"):
@@ -377,8 +389,8 @@ if __name__ == '__main__':
 
     # print(get_all_region_related_ec2())
     # download_all_region_related_info()
-    pp(get_all_download_path(operating_system="linux", region="us-west-2",
-                             pricing_strategy="reserved"))
+    # pp(get_all_download_path(operating_system="linux", region="us-west-2",
+    #                          pricing_strategy="reserved"))
 
     import json
 
@@ -390,8 +402,8 @@ if __name__ == '__main__':
             "C:\\Users\\chetan.k\\PycharmProjects\\aws\\dataPirates\\lib\\ec2\\region\\ap-east-1\\linux-reserved-instance.json") as on_dem:
         reserved = json.load(on_dem)
 
-    print(len(on_demand["prices"]))
-    print(len(reserved["prices"]))
+    # print(len(on_demand["prices"]))
+    # print(len(reserved["prices"]))
     # result = filter_result(on_demand["prices"])
     # pp(result)
     #
@@ -401,4 +413,4 @@ if __name__ == '__main__':
     #     new_result = three_year_std_reserved(reserved["prices"], result)
     #     print(new_result)
 
-    pp(get_all_costing())
+    # pp(get_all_costing())

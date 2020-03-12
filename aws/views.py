@@ -75,3 +75,4 @@ class GetEc2Instance(APIView):
 
         except Exception as e:
             print(e)
+            raise
