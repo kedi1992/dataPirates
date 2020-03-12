@@ -1,7 +1,9 @@
 import os
 import json
+import urllib3
+urllib3.disable_warnings()
 
-print(os.path.dirname(__file__))
+region_path = os.path.join(os.path.dirname(__file__), "region")
 
 class PriceComparision:
     def __init__(self):
@@ -10,22 +12,39 @@ class PriceComparision:
         except Exception as e:
             print("Exception in PriceComparision class : {}", e)
 
-
-    def getCost(self, storageClass="Standard", storageCapacityInGB="600000"):
+    def getRegionName(self, region_code):
         try:
-            path_of_S3_data = os.path.join(os.path.dirname(__file__), "S3_data")
+            region_mapping = os.path.join(os.path.dirname(os.path.dirname(__file__)), "regionMapping.json")
+
+            with open(region_mapping) as region_mapping_dp:
+                region_mapping_actual: dict = json.load(region_mapping_dp)
+
+            region_mapping_json = {v: k for k, v in region_mapping_actual.items()}
+
+            for k, v in region_mapping_json.items():
+                if k == region_code:
+                    return v
+
+            return None
+        except Exception as e:
+            print("Exception in getRegionName method : {}".format(e))
+            return False
+
+    def getCost(self, storageClass, storageCapacityInGB):
+        try:
+
             for dirpath, dirnames, files in os.walk(os.path.join(os.path.dirname(__file__), "S3_data"), topdown=False):
                 # Traversing for each region json
                 for file in files:
-                    print("-------------------------------------------------------------------------",file)
+
                     temp_final_cost_json = {}
                     total_cost = 0
                     file_location = os.path.join(dirpath, file)
-                    print("]]]]]]]]]",file_location)
+
                     with open(file_location, "r+") as fd:
                         temp_file_content = json.loads(fd.read())
                     fd.close()
-                    print(type(temp_file_content))
+
                     for a in temp_file_content["products"].keys():
                         storageType = temp_file_content["products"][a].get("attributes", None).get("volumeType", None)
 
@@ -42,6 +61,7 @@ class PriceComparision:
                                         temp_json["description"] = v1.get("description")
                                         temp_cost_json_list.append(temp_json)
 
+                                # When there are multiple fairs for each category
                                 if len(temp_cost_json_list) == 3:
                                     storageSizeinTB = int(storageCapacityInGB)/1000
 
@@ -70,24 +90,31 @@ class PriceComparision:
                                                     total_cost = total_cost + float(first_sort) * float(1024) * float(
                                                         ele["pricePerUnit"]["USD"])
 
+                                    temp_final_cost_json["region"] = self.getRegionName(region_code=file)
+                                    temp_final_cost_json["storageClass"] = storageType
+                                    temp_final_cost_json["totalCost"] = total_cost
 
-                                    print("++++",total_cost)
-                                    # temp_cost_json_list["region"] =
+                                    self.prise_list.append(temp_final_cost_json)
 
+                                # When there is only one fair for all categories
+                                if len(temp_cost_json_list) == 1:
+                                    storageSizeinTB = int(storageCapacityInGB) / 1000
 
+                                    for ele in temp_cost_json_list:
+                                        total_cost = total_cost + float(storageSizeinTB) * float(1024) * float(
+                                            ele["pricePerUnit"]["USD"])
 
-                                    print("?????", temp_cost_json_list)
+                                    temp_final_cost_json["region"] = self.getRegionName(region_code=file)
+                                    temp_final_cost_json["storageClass"] = storageType
+                                    temp_final_cost_json["totalCost"] = total_cost
 
-
-
-
-
-                    exit(1)
-
+                                    self.prise_list.append(temp_final_cost_json)
+                result_data = sorted(self.prise_list, key=lambda v: v.get("totalCost"))
+                return result_data
         except Exception as e:
             print("Exception ocuured in getCost method : {}", format(e))
             return False
 
 
-obj = PriceComparision()
-obj.getCost()
+# obj = PriceComparision()
+# print(obj.getCost())
