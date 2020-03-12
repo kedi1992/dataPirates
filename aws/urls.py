@@ -9,5 +9,6 @@ from django.views.decorators.csrf import csrf_exempt
 urlpatterns = [
     path('', views.index, name="index"),
     url(r'^aws/getServices', csrf_exempt(GetServices.as_view())),
+    url(r'^aws/getOfferCodes', csrf_exempt(views.GetAllOfferCodes.as_view())),
 
 ]
