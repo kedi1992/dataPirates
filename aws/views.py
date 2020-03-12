@@ -38,6 +38,10 @@ def result(request):
     if "vm" == tmp:
         # info_list.append(request.GET.get("type", None))
         info_list.append("OS : " + request.GET.get("os_type", ""))
+
+        data = get_all_costing(vcpu=10, operating_system="linux", memory=float(10.0))
+        print(">>>>>>>>>>>>>>>>>>>>>>>> : ", len(data))
+
         # info_list.append("CPU : " + request.GET.get("cpu", ""))
         # info_list.append("RAM : " + request.GET.get("ram", ""))
     elif "storage" == tmp:

@@ -23,7 +23,7 @@ with open(region_mapping) as region_mapping_dp:
 
 region_mapping_json = {v: k for k, v in region_mapping_actual.items()}
 
-print(region_mapping)
+# print(region_mapping)
 
 
 # with open(os.path.dirname(__file__))
@@ -63,11 +63,11 @@ def get_all_download_path(operating_system=None, region=None, pricing_strategy=N
 
 
 def download_information(remote_url, file_name, download_location):
-    print(remote_url)
-    print(file_name)
-    print(download_location)
+    # print(remote_url)
+    # print(file_name)
+    # print(download_location)
     response = requests.get(remote_url, verify=False)
-    print(response.status_code)
+    # print(response.status_code)
     try:
         os.makedirs(download_location, exist_ok=True)
         download_file_location = os.path.join(download_location, file_name)
@@ -81,7 +81,7 @@ def download_information(remote_url, file_name, download_location):
 
 
 def download_all_region_related_info(operating_system='linux'):
-    print(region_path)
+    # print(region_path)
     if os.path.exists(region_path):
         print("No need to download data")
         return
@@ -122,7 +122,7 @@ def get_ram(product):
 def get_vcpu(product):
     if product["attributes"].get("aws:ec2:vcpu"):
         product_vcpu = int(product["attributes"]["aws:ec2:vcpu"].strip())
-        print(product_vcpu)
+        # print(product_vcpu)
         return product_vcpu
     # print("It don't have aws:ec2:memory")
 
@@ -140,7 +140,7 @@ def compare_against_price(price_list, compair_product, filter_ondemand=None):
     for product in price_list:
 
         if filter_ondemand:
-            print("on demand filter acitvated")
+            # print("on demand filter acitvated")
             if product.get("calculatedPrice") and best_result.get("calculatedPrice"):
                 if not (float(product["calculatedPrice"]["onDemandRate"]["USD"]) \
                         < float(best_result["calculatedPrice"]["onDemandRate"]["USD"])):
@@ -314,7 +314,7 @@ def get_all_costing(vcpu=4, memory=5, operating_system="linux"):
                     result_data.append(get_required_field(new_result))
             continue
 
-        print(ondemand_path)
+        # print(ondemand_path)
         with open(ondemand_path[0]) as on_dem:
             on_demand = json.load(on_dem)
 
@@ -340,22 +340,22 @@ def get_all_costing(vcpu=4, memory=5, operating_system="linux"):
                                             ram=memory,
                                             vcpu=vcpu,
                                             filter_ondemand=True)
-            print("Calling reserver result")
+            # print("Calling reserver result")
             if reserver_result:
                 result_data.append(get_required_field(reserver_result))
 
         if reserved_path and result:
-            print(reserved_path)
+            # print(reserved_path)
             with open(reserved_path[0]) as on_dem:
                 reserved = json.load(on_dem)
 
             if result is not None:
-                print("Getting one year data")
+                # print("Getting one year data")
                 new_result = one_year_std_reserved(reserved["prices"], result)
                 if new_result:
                     result_data.append(get_required_field(new_result))
 
-                print(new_result)
+                # print(new_result)
 
     result_data = sorted(result_data, key=lambda v: v.get("onDemandHourlyCost"))
     return result_data
