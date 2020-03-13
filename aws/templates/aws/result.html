@@ -5,15 +5,15 @@
         <div class="section__content section__content--p30">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-xl-10">
+                    <div class="col-xl-12">
                         <div class="recent-report2">
                             <h3 class="title-3">{{ category }}</h3>&nbsp;&nbsp;
                             <div class="chart-info">
                                 <div class="chart-info__left">
                                     <div class="chart-note">
-                                        <span class="dot dot--blue"></span>
                                         {% for e in info %}
-                                            <span>{{ e }}</span>
+                                        <span class="dot dot--blue"></span>
+                                        <span>{{ e }}</span>
                                         {% endfor %}
                                     </div>
                                 </div>
@@ -22,38 +22,29 @@
                             <table class="table table-borderless table-data3">
                             <thead>
                                 <tr>
+                                    <th>Instance</th>
                                     <th>Region</th>
-                                    <th>OS Name</th>
-                                    <th>vCPU</th>
-                                    <th class="text-right">RAM</th>
-                                    <th class="text-right">Prices</th>
+                                    <th>onDemandHourlyCost</th>
+                                    <th>1yrStdReservedHourlyCost</th>
+                                    <th class="text-right">vCPU</th>
+                                    <th class="text-right">Memory</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td><div class="radio">
-                                            <label for="radio1" class="form-check-label ">
-                                                <input type="radio" id="radio1" name="radios" value="" class="form-check-input">Mumbai
-                                            </label>
-                                        </div>
-                                    </td>
-                                    <td>Linux</td>
-                                    <td>8 Core</td>
-                                    <td class="text-right">16GB</td>
-                                    <td class="text-right">$100</td>
-                                </tr>
-                                <tr>
-                                    <td><div class="radio">
-                                            <label for="radio1" class="form-check-label ">
-                                                <input type="radio" id="radio11" name="radios" value="" class="form-check-input">Pune
-                                            </label>
-                                        </div>
-                                    </td>
-                                    <td>Linux</td>
-                                    <td>8 Core</td>
-                                    <td class="text-right">16GB</td>
-                                    <td class="text-right">$100</td>
-                                </tr>
+                                {% for e in pricing %}
+                                    <tr>
+                                        <td><div class="radio">
+                                                <label for="radio1" class="form-check-label ">
+                                                    <input type="radio" id="radio1" name="radios" class="form-check-input">{{ e.instanceType }}
+                                                </label>
+                                            </div></td>
+                                        <td>{{ e.region }}</td>
+                                        <td>${{ e.onDemandHourlyCost }}</td>
+                                        <td>${{ e.1yrStdReservedHourlyCost }}</td>
+                                        <td class="text-right">{{ e.vCpu }}</td>
+                                        <td class="text-right">{{ e.memory }}</td>
+                                    </tr>
+                                {% endfor %}
                             </tbody>
                             </table><br>
                             <button type="button" class="btn btn-success">Add To Cart</button>

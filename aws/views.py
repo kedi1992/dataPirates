@@ -30,20 +30,21 @@ def category(request):
 
 
 def result(request):
+    import json
     key = request.GET.get("key", None)
     service_type = request.GET.get("type", None)
+    pricing = []
     category_name = str(request.path).split("/")[-1].replace("type=", "")
     info_list = []
     tmp = str(request.path).split("/")[-2].replace("type=", "")
     if "vm" == tmp:
-        # info_list.append(request.GET.get("type", None))
+        cpu = request.GET.get("cpu", None)
+        os_type = request.GET.get("os_type", 'linux')
+        memory = request.GET.get("ram", None)
         info_list.append("OS : " + request.GET.get("os_type", ""))
-
-        data = get_all_costing(vcpu=10, operating_system="linux", memory=float(10.0))
-        print(">>>>>>>>>>>>>>>>>>>>>>>> : ", len(data))
-
-        # info_list.append("CPU : " + request.GET.get("cpu", ""))
-        # info_list.append("RAM : " + request.GET.get("ram", ""))
+        pricing = get_all_costing(vcpu=int(cpu), operating_system=os_type, memory=float(memory))
+        info_list.append("vCPU : " + request.GET.get("cpu", ""))
+        info_list.append("RAM : " + request.GET.get("ram", "") + "GiB")
     elif "storage" == tmp:
         info_list.append(request.GET.get("key", ""))
     print("service_type :", service_type)
@@ -53,7 +54,8 @@ def result(request):
     print("info : ", info_list)
     return render(request, 'aws/result.html', context={"type": service_type,
                                                        "key": key, "category": category_name,
-                                                       "info": info_list})
+                                                       "info": info_list,
+                                                       "pricing": pricing})
 
 
 class GetAllOfferCodes(APIView):
