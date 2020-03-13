@@ -42,9 +42,17 @@ def result(request):
         os_type = request.GET.get("os_type", 'linux')
         memory = request.GET.get("ram", None)
         info_list.append("OS : " + request.GET.get("os_type", ""))
+
+        # set default values
+        if not cpu:
+            cpu = 1
+        if not memory:
+            memory = 0.5
+
         pricing = get_all_costing(vcpu=int(cpu), operating_system=os_type, memory=float(memory))
         info_list.append("vCPU : " + request.GET.get("cpu", ""))
         info_list.append("RAM : " + request.GET.get("ram", "") + "GiB")
+
     elif "storage" == tmp:
         info_list.append(request.GET.get("key", ""))
     print("service_type :", service_type)

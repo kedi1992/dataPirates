@@ -85,7 +85,7 @@ def download_information(remote_url, file_name, download_location):
 
 def download_all_region_related_info(operating_system='linux'):
     # print(region_path)
-    operating_list = ["windows", "windows-std", "windows-web", "windows-enterprise", "rhel",
+    operating_list = ["linux", "windows", "windows-std", "windows-web", "windows-enterprise", "rhel",
                       "suse", "linux-web", "linux-enterprise"]
 
     if os.path.exists(region_path):
@@ -392,6 +392,8 @@ def get_required_field(product):
         result["onDemandYearlyCost"] = float(result["onDemandMonthlyCost"]) * 365
         result["1yrStdReservedHourlyCost"] = product["calculatedPrice"]["effectiveHourlyRate"]["USD"]
 
+    if result["1yrStdReservedHourlyCost"] != "NA":
+        result["1yrStdReservedHourlyCost"] = round(result["1yrStdReservedHourlyCost"], 6)
     return result
 
 
@@ -427,4 +429,4 @@ if __name__ == '__main__':
     #     new_result = three_year_std_reserved(reserved["prices"], result)
     #     print(new_result)
 
-    pp(get_all_costing(vcpu=5, operating_system="windows", memory=12))
+    pp(get_all_costing(vcpu=5, operating_system="linux", memory=3))
