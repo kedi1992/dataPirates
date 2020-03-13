@@ -17,8 +17,9 @@
 	"Europe (Paris)": "eu-west-3",
 	"Europe (Stockholm)": "eu-north-1",
 	"Middle East (Bahrain)": "me-south-1",
-	"South America (São Paulo)": "sa-east-1",
+	"South America (Sao Paulo)": "sa-east-1",
     "AWS GovCloud (US-East)": "us-gov-east-1",
-    "AWS GovCloud (US)": "us-gov-west-1"
+    "AWS GovCloud (US)": "us-gov-west-1",
+	"US West (Los Angeles)": "us-west-2-lax-1"
 
 }

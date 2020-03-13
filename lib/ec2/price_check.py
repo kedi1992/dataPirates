@@ -14,6 +14,7 @@ import requests
 import os
 import json
 import urllib3
+
 urllib3.disable_warnings()
 region_path = os.path.join(os.path.dirname(__file__), "region")
 region_mapping = os.path.join(os.path.dirname(os.path.dirname(__file__)), "regionMapping.json")
@@ -22,6 +23,7 @@ with open(region_mapping) as region_mapping_dp:
     region_mapping_actual: dict = json.load(region_mapping_dp)
 
 region_mapping_json = {v: k for k, v in region_mapping_actual.items()}
+
 
 # print(region_mapping)
 
@@ -48,7 +50,7 @@ def get_all_download_path(operating_system=None, region=None, pricing_strategy=N
             if not (os.path.isfile(file_location) and ".json" in file_location):
                 continue
 
-            if operating_system and not (operating_system.lower() + "-" in file_location):
+            if operating_system and not (operating_system.lower() + "--" in file_location):
                 continue
 
             if region and not (region.lower() == os.path.basename(os.path.dirname(file_location))):
@@ -63,9 +65,10 @@ def get_all_download_path(operating_system=None, region=None, pricing_strategy=N
 
 
 def download_information(remote_url, file_name, download_location):
-    # print(remote_url)
-    # print(file_name)
-    # print(download_location)
+    print(remote_url)
+    print(file_name)
+    print(download_location)
+    print()
     response = requests.get(remote_url, verify=False)
     # print(response.status_code)
     try:
@@ -82,33 +85,40 @@ def download_information(remote_url, file_name, download_location):
 
 def download_all_region_related_info(operating_system='linux'):
     # print(region_path)
+    operating_list = ["windows", "windows-std", "windows-web", "windows-enterprise", "rhel",
+                      "suse", "linux-web", "linux-enterprise"]
+
     if os.path.exists(region_path):
-        print("No need to download data")
+        print("No need to download data , If you want to update data with latest data "
+              "then delete this folder /lib/ec2/region folder")
         return
 
+    print("It take 10 min  to Download Latest EC2 Price list ,Please DON'T KILL PROCESS")
     os.makedirs(region_path, exist_ok=True)
     all_region = get_all_region_related_ec2()
-    for region in all_region:
-        ondemand_url = "https://calculator.aws/pricing/1.0/" \
-                       "ec2/region/{region}/{category}/{os}/index.json".format(region=region,
-                                                                               category="ondemand",
-                                                                               os=operating_system)
-        reserved_url = "https://calculator.aws/pricing/1.0/" \
-                       "ec2/region/{region}/{category}/{os}/index.json".format(region=region,
-                                                                               category="reserved-instance",
-                                                                               os='linux')
 
-        download_location = os.path.join(region_path, region)
+    for operating_system in operating_list:
+        for region in all_region:
+            ondemand_url = "https://calculator.aws/pricing/1.0/" \
+                           "ec2/region/{region}/{category}/{os}/index.json".format(region=region,
+                                                                                   category="ondemand",
+                                                                                   os=operating_system)
+            reserved_url = "https://calculator.aws/pricing/1.0/" \
+                           "ec2/region/{region}/{category}/{os}/index.json".format(region=region,
+                                                                                   category="reserved-instance",
+                                                                                   os=operating_system)
 
-        download_information(remote_url=ondemand_url,
-                             file_name=operating_system + "-onedemand.json",
-                             download_location=download_location,
-                             )
+            download_location = os.path.join(region_path, region)
 
-        download_information(remote_url=reserved_url,
-                             file_name=operating_system + "-reserved-instance.json",
-                             download_location=download_location,
-                             )
+            download_information(remote_url=ondemand_url,
+                                 file_name=operating_system + "--onedemand.json",
+                                 download_location=download_location,
+                                 )
+
+            download_information(remote_url=reserved_url,
+                                 file_name=operating_system + "--reserved-instance.json",
+                                 download_location=download_location,
+                                 )
 
 
 def get_ram(product):
@@ -299,19 +309,22 @@ def get_all_costing(vcpu=4, memory=5, operating_system="linux"):
             reserved_path = get_all_download_path(operating_system=operating_system, region=region,
                                                   pricing_strategy="reserved")
 
-            with open(reserved_path[0]) as on_dem:
-                reserved = json.load(on_dem)
+            print(reserved_path)
+            if reserved_path:
+                with open(reserved_path[0]) as on_dem:
+                    reserved = json.load(on_dem)
 
-            reserver_result = filter_result(price_list=reserved["prices"],
-                                            ram=memory,
-                                            vcpu=vcpu,
-                                            filter_ondemand=True)
-            if reserver_result:
-                # result_data.append(reserver_result)
+                reserver_result = filter_result(price_list=reserved["prices"],
+                                                ram=memory,
+                                                vcpu=vcpu,
+                                                filter_ondemand=True)
 
-                new_result = one_year_std_reserved(reserved["prices"], reserver_result)
-                if new_result:
-                    result_data.append(get_required_field(new_result))
+                if reserver_result:
+                    # result_data.append(reserver_result)
+
+                    new_result = one_year_std_reserved(reserved["prices"], reserver_result)
+                    if new_result:
+                        result_data.append(get_required_field(new_result))
             continue
 
         # print(ondemand_path)
@@ -388,19 +401,20 @@ if __name__ == '__main__':
     #                      download_location=os.path.dirname(__file__))
 
     # print(get_all_region_related_ec2())
-    # download_all_region_related_info()
+    download_all_region_related_info()
     # pp(get_all_download_path(operating_system="linux", region="us-west-2",
     #                          pricing_strategy="reserved"))
 
     import json
+    from pprint import pprint as pp
 
-    with open(
-            "C:\\Users\\chetan.k\\PycharmProjects\\aws\\dataPirates\\lib\\ec2\\region\\ap-east-1\\linux-onedemand.json") as on_dem:
-        on_demand = json.load(on_dem)
-
-    with open(
-            "C:\\Users\\chetan.k\\PycharmProjects\\aws\\dataPirates\\lib\\ec2\\region\\ap-east-1\\linux-reserved-instance.json") as on_dem:
-        reserved = json.load(on_dem)
+    # with open(
+    #         "C:\\Users\\chetan.k\\PycharmProjects\\aws\\dataPirates\\lib\\ec2\\region\\ap-east-1\\linux-onedemand.json") as on_dem:
+    #     on_demand = json.load(on_dem)
+    #
+    # with open(
+    #         "C:\\Users\\chetan.k\\PycharmProjects\\aws\\dataPirates\\lib\\ec2\\region\\ap-east-1\\linux-reserved-instance.json") as on_dem:
+    #     reserved = json.load(on_dem)
 
     # print(len(on_demand["prices"]))
     # print(len(reserved["prices"]))
@@ -413,4 +427,4 @@ if __name__ == '__main__':
     #     new_result = three_year_std_reserved(reserved["prices"], result)
     #     print(new_result)
 
-    # pp(get_all_costing())
+    pp(get_all_costing(vcpu=5, operating_system="windows", memory=12))

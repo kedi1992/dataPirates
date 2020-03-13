@@ -120,3 +120,19 @@ class GetEc2Instance(APIView):
         except Exception as e:
             print(e)
             raise
+
+class GetS3ServiceEstimate(APIView):
+    def post(self, request):
+        try:
+            request_body: dict = request.data
+            storageClass = request_body.get("storageClass", None)
+            storageCapacityInGB = request_body.get("storageCapacityInGB", None)
+
+            from lib.S3.price_comparision import PriceComparision
+            obj = PriceComparision()
+            response = obj.getCost(storageClass=storageClass, storageCapacityInGB=storageCapacityInGB)
+
+            return Response(response, status=200)
+        except Exception as e:
+            print("Exception in view of GetS3ServiceEstimate : {}".format(e))
+            return False
